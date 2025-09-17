@@ -1,8 +1,8 @@
 # EECE 4811 - Operating Systems
 
 ## Group Members
-Himadri Saha
-Ashwin Srinivasan
+Himadri Saha,
+Ashwin Srinivasan &
 Yaritza Sanchez
 
 ## Description
