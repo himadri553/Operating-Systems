@@ -1,13 +1,3 @@
-/*
-	EECE 4811 - Operating Systems
-	HW0 - Question 2
-	Himadri Saha, Ashwin Srinivasan, Yaritza Sanchez
-
-	List of processes
-	- push (element to top of stack)
-	- pop (removes and returns top element of stack)
-*/
-
 package main
 
 import (
@@ -32,13 +22,13 @@ func (s *Stack) Push(value int) {
 		return
 	}
 	s.top++
-	s.arr[s.top] = value //end push function
+	s.arr[s.top] = value //end push function //end push function
 }
 
 // Pop function
 func (s *Stack) Pop() int {
 	if s.top < 0 {
-		fmt.Println("Error: Stack underflow") //run out of values to push  out
+		fmt.Println("Error: Stack underflow") //run out of values to push  out //run out of values to push  out
 		return -1 // sentinel value
 	}
 	val := s.arr[s.top]
