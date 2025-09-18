@@ -18,18 +18,18 @@ func NewStack() *Stack {
 // Push function
 func (s *Stack) Push(value int) {
 	if s.top >= len(s.arr)-1 {
-		fmt.Println("Error: Stack overflow") //run out of values to push  out
+		fmt.Println("Error: Stack overflow") //run out of values to push out
 		return
 	}
 	s.top++
-	s.arr[s.top] = value //end push function //end push function
+	s.arr[s.top] = value //end push function 
 }
 
 // Pop function
 func (s *Stack) Pop() int {
 	if s.top < 0 {
-		fmt.Println("Error: Stack underflow") //run out of values to push  out //run out of values to push  out
-		return -1 // sentinel value
+		fmt.Println("Error: Stack underflow") //run out of values to push out 
+		return -1 //sentinel value
 	}
 	val := s.arr[s.top]
 	s.top--
