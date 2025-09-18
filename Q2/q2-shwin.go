@@ -1,7 +1,17 @@
+/*
+	EECE 4811 - Operating Systems
+	HW0 - Question 2
+	Himadri Saha, Ashwin Srinivasan, Yaritza Sanchez
+
+	List of processes
+	- push (element to top of stack)
+	- pop (removes and returns top element of stack)
+*/
+
 package main
 
 import (
-	"fmt"
+	"fmt" //library
 )
 
 // Stack definition
@@ -18,22 +28,22 @@ func NewStack() *Stack {
 // Push function
 func (s *Stack) Push(value int) {
 	if s.top >= len(s.arr)-1 {
-		fmt.Println("Error: Stack overflow")
+		fmt.Println("Error: Stack overflow") //run out of values to push  out
 		return
 	}
 	s.top++
-	s.arr[s.top] = value
+	s.arr[s.top] = value //end push function
 }
 
 // Pop function
 func (s *Stack) Pop() int {
 	if s.top < 0 {
-		fmt.Println("Error: Stack underflow")
+		fmt.Println("Error: Stack underflow") //run out of values to push  out
 		return -1 // sentinel value
 	}
 	val := s.arr[s.top]
 	s.top--
-	return val
+	return val //end pop function
 }
 
 // Demo
