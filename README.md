@@ -73,7 +73,7 @@ We used Visual Studio IDE with the Go installer.
             No extra libraries needed.
 
 # HW1
-        Question 1 - Answer   attached in Word doc.
+        Question 1 - Answers attached in Word doc.
         
         
         Question 2 - run in terminal: run hw1_q2.go or press the run and debug button
