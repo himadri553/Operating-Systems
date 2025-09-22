@@ -47,29 +47,29 @@ We used Visual Studio IDE with the Go installer.
             Process 19700 has exited with status 0
             Detaching
 
-Design of the Program
+        Design of the Program
     
-    Q1: Producer and Consumer
-        The parent process is the producer. 
-        It spawns a child process with the --role=consumer flag.
+            Q1: Producer and Consumer
+                The parent process is the producer. 
+                It spawns a child process with the --role=consumer flag.
 
-    Pipes:
+            Pipes:
 
-    Producer → Consumer: sends numbers (stdin).
-    Consumer → Producer: sends ACK messages (stderr).
-    Consumer → Terminal: prints outputs (stdout).
-    The producer waits for an ACK before sending the next number → ensures correct order.
-    Uses processes + pipes (threads).
+            Producer → Consumer: sends numbers (stdin).
+            Consumer → Producer: sends ACK messages (stderr).
+            Consumer → Terminal: prints outputs (stdout).
+            The producer waits for an ACK before sending the next number → ensures correct order.
+            Uses processes + pipes (threads).
 
-    Q2: Stack
-        Implemented with a fixed array of size 100.
-        Push: adds a value to the top of the stack, checks for overflow.
-        Pop: removes and returns the top value, checks for underflow.
-        Demo shows pushing 10, 20, 30 then popping four times → last one triggers underflow.
+            Q2: Stack
+                Implemented with a fixed array of size 100.
+                Push: adds a value to the top of the stack, checks for overflow.
+                Pop: removes and returns the top value, checks for underflow.
+                Demo shows pushing 10, 20, 30 then popping four times → last one triggers underflow.
 
-    Dependencies
+        Dependencies
 
-    Only Go standard library: fmt, os, os/exec, bufio, strconv.
-    No extra libraries needed.
+            Only Go standard library: fmt, os, os/exec, bufio, strconv.
+            No extra libraries needed.
 
     
