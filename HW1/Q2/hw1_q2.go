@@ -76,7 +76,6 @@ func main() {
 	}
 }
 
--
 // Goroutine mode (HW1)
 
 func runGoroutine(N, chanBuf int, quiet bool) time.Duration {

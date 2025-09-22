@@ -1,17 +1,18 @@
 # EECE 4811 - Operating Systems
 
-## Group Members
+#Group Members
 Himadri Saha, Ashwin Srinivasan, Yaritza Sanchez
 
-### Language
+# Language
 Go programming language
 
-#### How to Run the Programs
+# How to Run the Programs
 
 We used Visual Studio IDE with the Go installer.
 
     1. Open the project folder in VS Code, then run the .go files in the terminal
         
+# HW0
         Question 1 - run in terminal: go run producer-consumer.go or press the run and debugg button
 
         Output:
@@ -46,7 +47,7 @@ We used Visual Studio IDE with the Go installer.
             Process 19700 has exited with status 0
             Detaching
 
-##### Design of the Programs
+Design of the Program
     
     Q1: Producer and Consumer
         The parent process is the producer. 
