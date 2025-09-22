@@ -72,4 +72,17 @@ We used Visual Studio IDE with the Go installer.
             Only Go standard library: fmt, os, os/exec, bufio, strconv.
             No extra libraries needed.
 
-    
+# HW1
+        Question 2 - run in terminal: run hw1_q2.go or press the run and debug button
+
+         - Process-based (parent/child with pipes)
+         - Goroutine-based (single process, channels)
+         - Includes a simple benchmark harness.
+         
+        Dependencies
+
+            Only Go standard library: fmt, os, os/exec, bufio, strconv.
+            No extra libraries needed
+
+
+        
