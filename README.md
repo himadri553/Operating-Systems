@@ -73,7 +73,7 @@ We used Visual Studio IDE with the Go installer.
             No extra libraries needed.
 
 # HW1
-        Question 1 - Answers attached in Word doc.
+        Question 1 - attached in Word doc.
         
         
         Question 2 - run in terminal: run hw1_q2.go or press the run and debug button
@@ -82,10 +82,14 @@ We used Visual Studio IDE with the Go installer.
          - Goroutine-based (single process, channels)
          - Includes a simple benchmark harness.
          
-        Dependencies
+        Dependencies:
 
             Only Go standard library: fmt, os, os/exec, bufio, strconv.
             No extra libraries needed
 
-
+        Design of the Program:
+        - Demonstrates and benchmarks two ways of implementing a producer–consumer system: using goroutines with channels or using separate            OS processes with pipes. In goroutine mode, the main function (producer) sends integers to a consumer goroutine through a channel
+        - In process mode, the parent process spawns a child copy of itself with a special flag (--role=consumer), then sends numbers                  through the child’s stdin and waits for "ACK\n" responses on the child’s stderr. 
+        - The '--quiet' flag suppresses prints to avoid I/O overhead, and the '--bench' flag runs trials in both modes to collect                      average, best, and standard deviation of runtimes.
         
+        Output:
