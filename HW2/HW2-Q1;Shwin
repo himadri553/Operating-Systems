@@ -1,4 +1,4 @@
-*/ Answer: No, the algorithm would no longer be correct. 
+/* Answer: No, the algorithm would no longer be correct. 
 The guard acts as a spin lock protecting the shared internal state of the lock (flag and queue).
 Without it, multiple threads could concurrently modify "flag" and the queue, causing race conditions.
 
@@ -56,7 +56,7 @@ Result: Two threads are inside critical section at the same time (which is very 
 33 // (for next thread!)
 34 m->guard = 0;
 35 } 
-/*
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
