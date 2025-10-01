@@ -26,7 +26,7 @@ Because of timing, it might read a stale flag or overlap with A’s modification
 -  Property Violation: If another unlock happens incorrectly (bug or double-unlock), flag could become -1.
 Now the flag (that only accepts 0 or 1) is broken.
 
-*/
+
 
 
 1 void lock(lock_t *lock) {
@@ -44,12 +44,11 @@ Now the flag (that only accepts 0 or 1) is broken.
 13 }
 
 
+*/
 
 
 
 
-/*
-ima leave it here incase im wrong
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
@@ -124,4 +123,4 @@ int main() {
     printf("[Main] Final lock flag: %d\n", mylock.flag);
     return 0;
 }
-*/
+
