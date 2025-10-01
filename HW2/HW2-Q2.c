@@ -4,11 +4,52 @@
 	Himadri Saha, Ashwin Srinivasan, Yaritza Sanchez
 
     Replacing line 12 of Figure 28.6 with "lock->flag = lock->flag - 1;" violates MUTUAL EXCLUSION
-    2 Threads can be running at the same time in the cirtical section
+    2 Threads can be running at the same time in the critical section
 
 
 
 */
+
+The algorithm relies on the assumption that flags can only take values 0 or 1.
+But if we decrement instead of assigning, a malicious scheduler can interleave instructions and cause incorrect states:
+Execution Scenario:
+
+- Thread A holds the lock (flag = 1).
+
+- Thread A executes lock->flag = lock->flag - 1; It first reads flag = 1.
+
+- Before it writes back, Thread B tries to acquire the lock: It spins until it sees flag = 0. 
+Because of timing, it might read a stale flag or overlap with A’s modification.
+
+- Thread A writes back flag = 0
+
+-  Property Violation: If another unlock happens incorrectly (bug or double-unlock), flag could become -1.
+Now the flag (that only accepts 0 or 1) is broken.
+
+
+
+
+1 void lock(lock_t *lock) {
+2 while (1) {
+3 while (LoadLinked(&lock->flag) == 1)
+4 ; // spin until it’s zero
+5 if (StoreConditional(&lock->flag, 1) == 1)
+6 return; // if set-to-1 was success: done
+7 // otherwise: try again
+8 }
+9 }
+10
+11 void unlock(lock_t *lock) {
+12 lock->flag = 0;
+13 }
+
+
+
+
+
+
+/*
+idk wut on earth dis is but ima leave it here incase im wrong
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
@@ -83,3 +124,4 @@ int main() {
     printf("[Main] Final lock flag: %d\n", mylock.flag);
     return 0;
 }
+*/
