@@ -49,7 +49,7 @@ Now the flag (that only accepts 0 or 1) is broken.
 
 
 /*
-idk wut on earth dis is but ima leave it here incase im wrong
+ima leave it here incase im wrong
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
