@@ -1,4 +1,4 @@
-Answer: No, the algorithm would no longer be correct. 
+*/ Answer: No, the algorithm would no longer be correct. 
 The guard acts as a spin lock protecting the shared internal state of the lock (flag and queue).
 Without it, multiple threads could concurrently modify "flag" and the queue, causing race conditions.
 
@@ -56,3 +56,78 @@ Result: Two threads are inside critical section at the same time (which is very 
 33 // (for next thread!)
 34 m->guard = 0;
 35 } 
+/*
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <sched.h>
+#include <stdint.h>
+
+typedef struct __lock_no_guard {
+    volatile int flag;
+} lock_no_guard_t;
+
+void lock_init_no_guard(lock_no_guard_t *m) {
+    m->flag = 0;
+}
+
+void unlock_no_guard(lock_no_guard_t *m) {
+    m->flag = 0;
+}
+
+void lock_no_guard(lock_no_guard_t *m) {
+    for (;;) {
+        int f = m->flag;
+        sched_yield();
+        if (f == 0) {
+            m->flag = 1;
+            return;
+        }
+        while (m->flag) {
+            sched_yield();
+        }
+    }
+}
+
+#define N_THREADS 2
+
+pthread_barrier_t start_barrier;
+lock_no_guard_t demo_lock;
+
+void *thread_fn(void *arg) {
+    int id = (int)(intptr_t)arg;
+    pthread_barrier_wait(&start_barrier);
+    lock_no_guard(&demo_lock);
+    printf("Thread %d: ENTERED critical section (flag=%d)\n", id, demo_lock.flag);
+    sleep(1);
+    printf("Thread %d: LEAVING critical section\n", id);
+    unlock_no_guard(&demo_lock);
+    return NULL;
+}
+
+int main(void) {
+    pthread_t th[N_THREADS];
+    pthread_barrier_init(&start_barrier, NULL, N_THREADS);
+    lock_init_no_guard(&demo_lock);
+    for (int i = 0; i < N_THREADS; ++i) {
+        if (pthread_create(&th[i], NULL, thread_fn, (void*)(intptr_t)i) != 0) {
+            perror("pthread_create");
+            exit(1);
+        }
+    }
+    for (int i = 0; i < N_THREADS; ++i) {
+        pthread_join(th[i], NULL);
+    }
+    pthread_barrier_destroy(&start_barrier);
+    printf("Done\n");
+    return 0;
+}
+
+
+
+
+
+
+
