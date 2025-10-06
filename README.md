@@ -92,4 +92,3 @@ We used Visual Studio IDE with the Go installer.
         - In process mode, the parent process spawns a child copy of itself with a special flag (--role=consumer), then sends numbers                  through the child’s stdin and waits for "ACK\n" responses on the child’s stderr. 
         - The '--quiet' flag suppresses prints to avoid I/O overhead, and the '--bench' flag runs trials in both modes to collect                      average, best, and standard deviation of runtimes.
         
-        Output:
