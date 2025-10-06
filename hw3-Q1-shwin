@@ -1,0 +1,16 @@
+Ans: ChatGPT Prompt - "Give me 3 reliable sources of examples where Go code shares memory by communicating"
+It's meant as a design guideline encouraging message-passing concurrency (via channels) so that shared state is handled in a controlled, 
+serialized manner rather than mutating shared memory from multiple places. It leads to safer, more modular, and easier-to-reason concurrency in many cases.
+You will run into areas where u need to debug potential bottlenecks, and in practice, you might still need hybrid approaches (locks, atomics) depending 
+on performance and complexity tradeoffs.
+
+Source 1: https://go.dev/doc/codewalk/sharemem     
+This is from the Go project. It describes idioms and rationale under the hood, making it a primary and authoritative source.
+
+Source 2: https://go.dev/blog/codelab-share
+Gives a worked example and explanation of how to port a design using locks into a message-passing style, 
+because it’s from the Go authors, it is reliable regarding the intended design philosophy.
+
+Source 3: https://arxiv.org/abs/1610.08843
+This is an academic / systems-programming paper studying correctness, liveness, and safety of channel-based programs in Go. 
+It treats message-based concurrency seriously and formally, which lends weight to the engineering tradeoffs.
