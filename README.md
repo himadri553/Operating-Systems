@@ -92,3 +92,39 @@ We used Visual Studio IDE with the Go installer.
         - In process mode, the parent process spawns a child copy of itself with a special flag (--role=consumer), then sends numbers                  through the child’s stdin and waits for "ACK\n" responses on the child’s stderr. 
         - The '--quiet' flag suppresses prints to avoid I/O overhead, and the '--bench' flag runs trials in both modes to collect                      average, best, and standard deviation of runtimes.
         
+# HW4
+        Question 1 - attached in github.
+        
+        
+        Question 2 - run in terminal
+
+Two-lock queue (Figure 29.9):
+
+Dummy node so head always points to a node whose next is the first real element. Tail lock protects enqueues; head lock protects dequeues.
+Enqueues don’t block dequeues (and vice versa), but enqueues contend with each other on the tail lock, and dequeues contend on head lock.
+
+Michael & Scott lock-free queue:
+
+Head and tail are "atomic.Pointer" to nodes; each node’s next is also atomic.Pointer.
+Enqueue: link new node with CAS(tail.next, nil, n) then try to swing tail to n. If tail.next != nil, help advance the tail.
+Dequeue: read head, tail, head.next; if empty, return false; if head == tail, help advance tail; else CAS(head, head, head.next).
+
+Benchmarks:
+
+-  SPSC (Single-Producer / Single-Consumer):
+Very low contention; minimal pointer sharing.
+Expectation: the two-lock version can be as fast or faster (fewer atomics, zero CAS retries). Lock-free’s CAS loop overhead provides little benefit here.
+
+- MPSC (Many Producers / Single Consumer)
+Tail is the hotspot.
+Two-lock: all producers serialize on the tail mutex → bottleneck.
+Lock-free: producers still contend on tail.next CAS, but there’s no blocking; retriers can make progress once the cache line updates, often improving throughput under high producer counts.
+
+- SPMC (Single Producer / Many Consumers)
+Head is the hotspot.
+Two-lock: consumers serialize on the head mutex.
+Lock-free: consumers contend via CAS on head but avoid blocking; expected to do better as consumer count grows.
+
+- MPMC (Many / Many)
+Both ends hot; maximum contention.
+Two-lock has two independent bottlenecks; lock-free still contends but can reduce convoying and avoid priority inversion, often leading to better scaling with CPU count.
