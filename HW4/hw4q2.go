@@ -12,9 +12,7 @@ import (
 	"time"
 )
 
-/***************
- * Utilities
- ***************/
+
 type Counter struct {
 	EnqOK    uint64
 	DeqOK    uint64
@@ -41,9 +39,9 @@ func busyWork(nanos int) {
 	_ = x
 }
 
-/***************
- * Two-lock queue (Figure 29.9 style)
- ***************/
+
+ // Two-lock queue (Figure 29.9)
+
 type tlqNode struct {
 	val  int
 	next *tlqNode
@@ -86,12 +84,9 @@ func (q *TwoLockQueue) Dequeue() (int, bool) {
 	return v, true
 }
 
-/***************
- * Michael & Scott lock-free queue
- * Assumptions:
- *  - GC means we don't recycle nodes -> practical ABA risk is negligible for this lab.
- *  - We still follow the classic MS algorithm with a dummy node.
- ***************/
+/*
+ Michael & Scott lock-free queue
+*/
 type lfNode struct {
 	val  int
 	next atomic.Pointer[lfNode]
@@ -157,9 +152,9 @@ func (q *MSQueue) Dequeue() (int, bool) {
 	}
 }
 
-/***************
- * Benchmark harness
- ***************/
+/*
+ Benchmark harness
+ */
 type Queue interface {
 	Enqueue(v int)
 	Dequeue() (int, bool)
