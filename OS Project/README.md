@@ -6,7 +6,7 @@
 *to be updated*
 
 # Project Description 
-Using a Raspberry Pi Pico running Zephyr 4.2, this project will show how a RTOS (Real time OS) behaves under various types of loads. We will also analyze metrics to illistrate its behavior and explain what is going on. Everything will be controlled by a live USB serial shell.
+Using a Raspberry Pi Pico running the RTOS (Real time OS) Zephyr 4.2, this project will show how a RTOS behaves under various types of loads. We will also analyze metrics to illistrate its behavior and explain what is going on. Everything will be controlled by a live USB serial shell.
 
 ## Loads the OS will run (and slef report metrics using shared metrics helper functions)
 Computation Heavy Load:
@@ -23,16 +23,14 @@ I/O Heavy Load:
         - USB Interrupt-to-Handler Latency: How quickly does the system respond to the UART TX complete interrupt? (shows how well Zephyr prioritizes I/O interrupts against heavy computation)
         - 
 
-Periodic Real-Time Load:
-    - Thread taht toggles GPIO pin (on-board LED) at 10ms
-    - Simulates real-time control task 
-    - Stresses RTOS cheduler’s ability to meet deadlines
+Aperiodic Load (Inspired by RIT study):
     Metrics:
-        - Deadline misses: deadline = next_release + PERIOD_MS
+        - Deadline miss rate
+        - 
         
-
-Noise Load:
 Combination Scenarios: 
+    Metrics: 
+        - 
 
 ## Metrics 
 - start-time jitter
