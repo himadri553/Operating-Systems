@@ -65,8 +65,22 @@ Physical page number bits (PPN) = PA - offset
 Offset bits = log2(page size in bytes)
 
 i) 32-bit OS, 4-KB pages, 1 GB RAM
-a.  VA = 32
+a. VA = 32
 b. RAM = 1 GB = 2^30 -> PA = 30
 c. VPN = 32 − 12 = 20
 d. PPN = 30 − 12 = 18
 e. Page size = 4 KB = 2^12 -> Offset = 12
+
+ii) 32-bit operating system, 16-KB pages, 2 GB of RAM
+a. VA = 32
+b. RAM = 2 GB = 2^31 -> PA = 31
+c. VPN = 32 − 14 = 18
+d. PPN = 31 − 14 = 17
+e. Page size = 16 KB = 2^14 -> Offset = 14
+
+iii) 64-bit operating system, 16-KB pages, 16 GB of RAM
+a. VA = 64
+b. RAM = 16 GB = 2^34 -> PA = 34
+c. VPN = 64 − 14 = 50
+d. PPN = 34 − 14 = 20
+e. Page size = 16 KB = 2^14 -> Offset = 14
