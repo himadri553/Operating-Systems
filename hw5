@@ -1,0 +1,57 @@
+Priority Inversion: Explains the fundamental problem of priority inversion (a low-priority task holding a needed resource blocks a high-priority task)
+https://www.geeksforgeeks.org/operating-systems/priority-inversion
+
+Priority Inheritance: Overview focusing on Linux/RTOS context: how a real-time kernel handles priority inversion via priority inheritance.
+https://documentation.ubuntu.com/real-time/latest/explanation/priority-inversion-inheritance
+
+Priority Protection: Explains how “priority ceiling” resources are statically assigned a ceiling priority, and a task locking the resource immediately inherits that ceiling (“protection”) 
+even before a blocking event.
+https://user.it.uu.se/~wangyi/courses/rts/dvp-rts-07/notes/ResourceAccessProtocols.pdf
+
+Q1:
+- Time t = 0
+T2 (low-priority) starts running and locks the shared resource. It begins doing work while holding the lock.
+  
+- Time t = 2
+T1 (high-priority) arrives and tries to use the shared resource. But the lock is held by T2. T1 must block and wait.
+Under normal priority rules, since T1 is highest priority, the CPU should ideally switch to T1 immediately. But it cannot because T2 has the lock.
+
+- Time t = 3
+T3 (medium-priority) arrives. T1 is waiting. T2 should continue running to finish and release the lock for T1. However, since T3 has higher priority than T2, the scheduler picks T3.
+
+Result:
+T3 runs, while:
+
+T1 (highest priority) is forced to wait
+
+T2 (lowest priority), which holds the lock, cannot run
+
+The low-priority task (T2) ends up blocking the high-priority task (T1), because the medium-priority task (T3) interrupts it before it can release the lock.
+“Inversion” = the high-priority task ends up lower than everyone else.
+
+
+Q2:
+
+Priority Inheritance Protocol (PIP)
+
+Timeline:
+t=0→1: T2 runs (prio 3, but no competition yet).
+t=1: T1 arrives, blocks on T2’s lock. T2 inherits T1’s priority → T2 now runs at priority 1.
+t=1→5: Boosted T2 continues and finishes its CS at t=5.
+t=5→9: T1 acquires the lock and runs its CS, finishes at t=9.
+t=9→12: T3 runs (no lock), finishes at t=12.
+
+
+Priority Protection Protocol (PPP)
+
+Timeline:
+t=0→5: T2 runs at ceiling priority and finishes its CS at t=5.
+t=5→9: T1 runs its CS, finishes at t=9.
+t=9→12: T3 runs, finishes at t=12.
+
+1. T2 executes 5 time units.
+2. T2 finishes CS at t=5 (PPP & PIP)
+3. Total Execution Time = 5 + 4 + 3 = 12 (PPP & PIP)
+4. Neither protocol causes priority inversion delay for T1 here. Under PIP, T1 is blocked only by T2’s remaining CS (4 units after t=1), not by T3. PPP prevents any inversion proactively.
+5. PIP: T3 arrives at t=2 but cannot preemptly boost T2 (now priority 1) and later cannot preempt T1, so T3 runs after T1, from t=9→12.
+  PPP: T3 is kept out while T2 holds the ceiling and later while T1 runs; it executes last (t=9→12). Under PPP this is guaranteed from the moment T2 locks, even if T1 hadn’t arrived yet.
