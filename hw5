@@ -1,3 +1,4 @@
+-----1.-----
 Priority Inversion: Explains the fundamental problem of priority inversion (a low-priority task holding a needed resource blocks a high-priority task)
 https://www.geeksforgeeks.org/operating-systems/priority-inversion
 
@@ -55,3 +56,17 @@ t=9→12: T3 runs, finishes at t=12.
 4. Neither protocol causes priority inversion delay for T1 here. Under PIP, T1 is blocked only by T2’s remaining CS (4 units after t=1), not by T3. PPP prevents any inversion proactively.
 5. PIP: T3 arrives at t=2 but cannot preemptly boost T2 (now priority 1) and later cannot preempt T1, so T3 runs after T1, from t=9→12.
   PPP: T3 is kept out while T2 holds the ceiling and later while T1 runs; it executes last (t=9→12). Under PPP this is guaranteed from the moment T2 locks, even if T1 hadn’t arrived yet.
+
+-----2.-----
+Virtual address bits (VA) = width of the OS’s virtual address space (given)
+Physical address bits (PA) = log2(RAM size in bytes) 
+Virtual page number bits (VPN) = VA − offset
+Physical page number bits (PPN) = PA - offset
+Offset bits = log2(page size in bytes)
+
+i) 32-bit OS, 4-KB pages, 1 GB RAM
+a.  VA = 32
+b. RAM = 1 GB = 2^30 -> PA = 30
+c. VPN = 32 − 12 = 20
+d. PPN = 30 − 12 = 18
+e. Page size = 4 KB = 2^12 -> Offset = 12
