@@ -1,0 +1,97 @@
+Question 1) (scroll right to see full table)
+
+| Operation                          | Jeff Dean (≈2009) number*             | Recent/modern value                                                                                                        | Notes / Source                                                                                        |
+| ---------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| L1 cache reference                 | ~0.5 ns                               | ~1 ns (≈4 cycles @4 GHz) ([Wikipedia][2])                                                                                  | Wikipedia “Memory hierarchy” shows ~1 ns for L1 in 2020s era. ([Wikipedia][2])                        |
+| Branch mispredict                  | ~5 ns                                 | Not clearly fleshed out in modern sources; some blog posts still show ~3-5 ns. ([Ivan Pesin][3])                           | Hard to find fine‐grained modern latency for mispredict penalty in generic systems.                   |
+| L2 cache reference                 | ~7 ns                                 | ~3.5 ns for L2 (14 cycles @4GHz) in one table ([Wikipedia][2])                                                             | Wikipedia lists for L2 “3.5 ns (14 cycles)” for a 2020s system. ([Wikipedia][2])                      |
+| Mutex lock/unlock                  | ~25 ns                                | ~20-30 ns still cited ([Ivan Pesin][3])                                                                                    | Some variation due to architecture, but same ballpark.                                                |
+| Main memory reference              | ~100 ns                               | ~60-100 ns (for local DRAM access) ([Nexthink][4])                                                                         | For example, for Kaby Lake “memory access latency … ~60-100 ns”. ([Nexthink][4])                      |
+| Read 1 MB sequentially from memory | ~250,000 ns (≈0.25 ms)                | I didn’t locate a direct updated figure for *1 MB sequential*, but memory bandwidth has increased, so it likely is faster. | The original number is still widely quoted; explicit modern number less visible.                      |
+| Round-trip within same datacenter  | ~500,000 ns (≈0.5 ms)                 | Low‐hundreds of microseconds still cited for intra-DC latencies (≈0.2-1 ms) ([Medium][5])                                  | Network advances (25/100Gbps) help, but distances, routing, queuing still impose ~µs to ms latencies. |
+| Disk seek                          | ~10,000,000 ns (≈10 ms)               | HDD seek still ~5-10 ms; SSD/TLC/Enterprise SSDs much lower (tens to hundreds of µs)                                       | If you include SSDs, the “seek” number becomes much smaller, but for rotating media still applies.    |
+| Send packet CA→Netherlands→CA      | ~150,000,000 ns (≈150 ms)             | Typical inter-continental RTTs ~100-150 ms still for many routes. ([ByteByteGo Blog][6])                                   | Speed of light and routing constraints still dominate long‐haul latencies.                            |
+
+[1]: https://gist.github.com/jboner/2841832 "Latency Numbers Every Programmer Should Know - GitHub Gist"
+[2]: https://en.wikipedia.org/wiki/Memory_hierarchy "Memory hierarchy"
+[3]: https://pesin.space/posts/2020-09-22-latencies "Latency numbers every engineer should know"
+[4]: https://nexthink.com/blog/smarter-cpu-testing-kaby-lake-haswell-memory "How to Benchmark Kaby Lake & Haswell Memory Latency"
+[5]: https://medium.com/%40piyushkashyap045/understanding-latency-numbers-a-practical-guide-to-system-design-55fa7951cc49 "Understanding Latency Numbers: A Practical Guide to ..."
+[6]: https://blog.bytebytego.com/p/ep22-latency-numbers-you-should-know "EP22: Latency numbers you should know. Also... - by Alex Xu"
+
+Notes:
+- Most of the original numbers still hold in order of magnitude and are still useful “rules-of-thumb”.
+- Some improvements: e.g., L2 cache reference appears lower in modern systems (≈3-4 ns) compared to ~7 ns.
+- Some numbers are harder to update specifically (e.g., “read 1 MB sequentially from memory”) because 
+they depend on many system factors like bandwidth, prefetching, memory controller, etc.
+- For long-haul network (CA→NL→CA) and disk/HDD seek, physical / mechanical limits mean improvements are incremental, so the old numbers remain relevant as a ballpark.
+- As always, these numbers vary by CPU architecture, memory subsystem, network topology, storage technology. 
+The key value is the relative scale (cache vs memory vs disk vs network) rather than exact ns.
+- Modern “mutex lock/unlock” uncontested latency across different hardware is not always clearly documented in open sources with a straightforward ns.
+- “Read 1 MB sequentially from memory” (sequential memory bandwidth/latency measure) modern figure is less visible.
+- “Send packet CA→Netherlands→CA” – while RTT measurements exist, the exact comparable number to the old slide is route‐ and provider‐dependent.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Question 2)
+
+When a process forks, the operating system must create a new child process with the same virtual memory contents as the parent.
+Naively, that would mean copying every physical memory page, which is extremely expensive if the parent has a large address space.
+
+How COW Works:
+
+- Instead of immediately copying all memory pages, the kernel:
+- Marks all memory pages as read-only for both parent and child.
+- Maps the same physical pages into both processes’ page tables.
+- Sets a COW flag in each page table entry.
+- When either process tries to write to a shared page:
+- A page-fault exception occurs.
+- The kernel allocates a new physical page, copies the original page’s data into it, and updates that process’s page table entry to point to the new page (with write permission).
+- The other process continues to reference the old page.
+
+Why It Improves Latency:
+
+- Most processes call fork() only to immediately call exec(), replacing the address space entirely.
+- COW avoids copying unused memory — so fork() completes almost instantly.
+- Large address spaces cause no delay since pages are only copied on demand.
+- Reduces both time (latency) and memory usage.
+
+psuedo code:
+function fork(parent_process):
+    child = create_process()
+    for each virtual_page vp in parent.page_table:
+        child.page_table[vp] = parent.page_table[vp]
+        parent.page_table[vp].set_read_only()
+        child.page_table[vp].set_read_only()
+        parent.page_table[vp].set_COW_flag(true)
+        child.page_table[vp].set_COW_flag(true)
+        physical_page = parent.page_table[vp].physical_page
+        physical_page.ref_count += 1
+    child.registers = copy_registers(parent.registers)
+    child.files = duplicate_file_table(parent.files)
+    add_to_ready_queue(child)
+    return child.pid
+
+on_page_fault(process, faulting_address, access_type):
+    page_entry = process.page_table[faulting_address.page_number]
+    if access_type == WRITE and page_entry.is_COW():
+        old_page = page_entry.physical_page
+        new_page = alloc_physical_page()
+        memcpy(new_page, old_page)
+        page_entry.physical_page = new_page
+        page_entry.set_writable(true)
+        page_entry.set_COW_flag(false)
+        old_page.ref_count -= 1
+        if old_page.ref_count == 0:
+            free_physical_page(old_page)
+        flush_TLB_entry(faulting_address)
+        return SUCCESS
+    else:
+        handle_normal_page_fault(process, faulting_address, access_type)
+
+function free_process_memory(process):
+    for each page_entry in process.page_table:
+        page = page_entry.physical_page
+        page.ref_count -= 1
+        if page.ref_count == 0:
+            free_physical_page(page)
