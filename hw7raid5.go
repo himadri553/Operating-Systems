@@ -19,7 +19,7 @@ func (r *RAID5) Write(block int, data []byte) error {
     for i := 0; i < n; i++ {
         if i == parityDisk { continue }
         if dataDiskIndex == pos {
-            // Write block here
+            // Write block
             if err := r.disks[i].WriteBlock(stripe, data); err != nil {
                 return err
             }
@@ -27,7 +27,6 @@ func (r *RAID5) Write(block int, data []byte) error {
         dataDiskIndex++
     }
 
-    // Recompute parity
     parity := make([]byte, BlockSize)
     for i := 0; i < n; i++ {
         if i == parityDisk { continue }
