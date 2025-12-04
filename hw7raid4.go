@@ -27,7 +27,7 @@ func (r *RAID4) Write(block int, data []byte) error {
         return err
     }
 
-    // Recompute stripe parity
+    
     parityVal := make([]byte, BlockSize)
     for i := 0; i < len(r.dataDisks); i++ {
         b, _ := r.dataDisks[i].ReadBlock(offset)
