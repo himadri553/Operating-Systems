@@ -147,4 +147,8 @@ Five disk files (disk0.dat ... disk4.dat) are used. Each block is 4096 bytes.
 • XOR parity logic for RAID4/5  
 • Benchmark tool measuring read/write performance  
 
+<img width="1580" height="980" alt="output" src="https://github.com/user-attachments/assets/89c90e46-d99f-48fc-8c64-0b8e5c8d4d0a" />
+<img width="1580" height="980" alt="output (1)" src="https://github.com/user-attachments/assets/2b3c0995-4c2d-4e3e-a1a6-6b4c5d6b9e17" />
+<img width="1580" height="980" alt="output (2)" src="https://github.com/user-attachments/assets/265aea24-a76e-4287-9977-366819c83a2e" />
+
 
