@@ -128,3 +128,23 @@ Lock-free: consumers contend via CAS on head but avoid blocking; expected to do 
 - MPMC (Many / Many)
 Both ends hot; maximum contention.
 Two-lock has two independent bottlenecks; lock-free still contends but can reduce convoying and avoid priority inversion, often leading to better scaling with CPU count.
+
+#HW7
+RAID Simulation in Go
+
+implements RAID 0, RAID 1, RAID 4, and RAID 5 using regular files to simulate
+physical disks. Each RAID level implements the required interface:
+
+type RAID interface {
+    Write(blockNum int, data []byte) error
+    Read(blockNum int) ([]byte, error)
+}
+
+Five disk files (disk0.dat ... disk4.dat) are used. Each block is 4096 bytes.
+
+### Features
+• Full RAID implementations  
+• XOR parity logic for RAID4/5  
+• Benchmark tool measuring read/write performance  
+
+
