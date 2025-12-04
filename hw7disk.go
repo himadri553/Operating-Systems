@@ -21,7 +21,7 @@ func (d *Disk) WriteBlock(block int, data []byte) error {
     if err != nil { return err }
     _, err = d.f.Write(data)
     if err != nil { return err }
-    return d.f.Sync()    // fsync required by HW spec
+    return d.f.Sync()
 }
 
 func (d *Disk) ReadBlock(block int) ([]byte, error) {
