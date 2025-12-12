@@ -151,4 +151,38 @@ Five disk files (disk0.dat ... disk4.dat) are used. Each block is 4096 bytes.
 <img width="1580" height="980" alt="output (1)" src="https://github.com/user-attachments/assets/2b3c0995-4c2d-4e3e-a1a6-6b4c5d6b9e17" />
 <img width="1580" height="980" alt="output (2)" src="https://github.com/user-attachments/assets/265aea24-a76e-4287-9977-366819c83a2e" />
 
+# Hw8
 
+##   Problems in NaiveLogger (no sync)
+
+    -Multiple goroutines write at the same time → data race
+    -Output can become:
+        -interleaved (half of one line + half of another)
+        -corrupted (broken timestamps/levels)
+        -sometimes missing lines (buffer state gets inconsistent)
+
+    -Detect it with:
+        -go run -race main.go → should flag concurrent access (buffer/file)
+
+##   How MutexLogger fixes it
+
+    -Only one goroutine can enter the critical section at a time
+    -Prevents interleaving/corruption
+    -Still concurrent overall, just serialized at the write point
+
+##   How ChannelLogger fixes it
+
+    -Only the logger goroutine touches the file/buffer
+    -Producers just send messages
+    -Often cleaner design for logging pipelines
+
+##  Performance comparison expectations
+
+    -Naive likely slowest because fsync every write + races overhead
+    -Mutex + batching faster because only 1 fsync per 10 entries
+    -Channel + batching usually competitive or faster than mutex (depends on channel/buffer/OS)
+
+##   When fsync is necessary & why it’s expensive
+
+    -Necessary when you need durability (log must survive power loss / crash)
+    -Expensive because it forces the OS to flush buffers to stable storage and may wait for disk/SSD controller → high latency compared to normal writes
